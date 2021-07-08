@@ -4,14 +4,16 @@ import styled from '@emotion/styled'
 import Formulario from './Components/Formulario'
 import Resumen from './Components/Resumen'
 import Resultado from './Components/Resultado'
+import Spiner from './Components/Spiner'
+
+
 
 const Contenedor = styled.div`
-  max-width: 600 px;
+  max-width: 600px;
   margin: 0 auto;
-`
-
+`;
 const ContenedorFormulario = styled.div`
-  background-color: #FFFFFF;
+  background-color: #FFF;
   padding: 3rem;
 `
 
@@ -25,6 +27,9 @@ const App = () => {
       plan : ''
     }
   })
+
+  const [cargando, setCargando] = useState(false)
+
   const {datos, cotizacion} = resumen
 
   return (
@@ -34,9 +39,12 @@ const App = () => {
         <ContenedorFormulario>
           <Formulario
             setResumen={setResumen}
+            setCargando = {setCargando}
           />
+          { cargando ? <Spiner/> : null}          
           <Resumen datos={datos}/>
-          <Resultado cotizacion={cotizacion}/>
+          { !cargando ? <Resultado cotizacion={cotizacion}/>: null}
+          
         </ContenedorFormulario>
       </Contenedor>
     </Fragment>

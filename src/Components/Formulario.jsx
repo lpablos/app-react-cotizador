@@ -50,7 +50,7 @@ const Error = styled.div`
 `
 
 
-const Formulario = ({setResumen}) => {
+const Formulario = ({setResumen, setCargando}) => {
 
     const [datos, setDatos] = useState({
         marca : '',
@@ -92,11 +92,17 @@ const Formulario = ({setResumen}) => {
         const incrementoPlan = obtenerPlan(plan)
         // Total
         resultado = parseFloat(incrementoPlan * resultado).toFixed(2)
-        setResumen({
-            cotizacion : resultado,
-            datos
-        })
-        console.log(resultado);
+        setCargando(true)
+        setTimeout(() => {
+            // Oculta el spinner
+            setCargando(false)
+            // Pasa la informacion al componente principal
+            setResumen({
+                cotizacion : resultado,
+                datos
+            })            
+        }, 2000);
+        
         
     }
 
