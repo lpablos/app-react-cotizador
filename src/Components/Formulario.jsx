@@ -1,5 +1,6 @@
 import React, { Fragment, useState } from 'react'
 import styled from '@emotion/styled'
+import { obtenerDiferenciaYear, calcularMarca, obtenerPlan } from '../helper'
 
 const Campo = styled.div`
     display:flex;
@@ -14,7 +15,7 @@ const Label = styled.label`
 const Select = styled.select`
     display: block;
     width: 100%;
-    padding:1rem;
+    padding: 1rem;
     border: 1px solid #e1e1e1;
     --webkit-appearance: none;
 `
@@ -25,7 +26,7 @@ const Button = styled.button`
     background-color: #00838F;
     font-size: 16px;
     width: 100%;
-    padding:1rem;
+    padding: 1rem;
     color: #FFFFFF;
     text-transform: uppercase;
     font-weight: bold;
@@ -38,6 +39,16 @@ const Button = styled.button`
     }
 `
 
+const Error = styled.div`
+    background-color: red;
+    color:white;
+    padding:1rem;
+    width: 100%;
+    text-align: center;
+    margin-bottom: 2rem;
+    
+`
+
 
 const Formulario = () => {
 
@@ -46,6 +57,8 @@ const Formulario = () => {
         year : '',
         plan : ''
     })
+
+    const [error, setError] = useState(false)
     // Estraer los valores del state
     const { marca, year , plan } = datos
     // Leer los datos del formulario y colocarlos en el state.
@@ -57,11 +70,38 @@ const Formulario = () => {
 
     }
 
-
+    const cotizarSeguro = e =>{
+        e.preventDefault();
+        if(marca.trim() === '' || year.trim() === '' || plan.trim() === ''){
+            setError(true)
+            return
+        }
+        setError(false)
+        let resultado = 2000
+        // Obtener la diferencia de años
+        const diferencia = obtenerDiferenciaYear(year)
+        
+        resultado -= ((diferencia * 3 ) * resultado) / 100
+        // por cada año hay que restar el 3%
+        // Americano 15%
+        // Asiatico 5%
+        // Europeo 30%
+        resultado = calcularMarca(marca) * resultado
+        // Basico aumenta 20%
+        // Completo aumenta 50%
+        const incrementoPlan = obtenerPlan(plan)
+        // Total
+        resultado = parseFloat(incrementoPlan * resultado).toFixed(2)
+        console.log(resultado);
+        
+    }
 
     return (
         <Fragment>
-            <form action="">
+            <form action="" onSubmit={cotizarSeguro}>
+                {
+                    error ? <Error>Todos los campos son obligatorios</Error> : null  
+                }
                 <Campo>
                     <Label htmlFor="marca">Marca</Label>
                     <Select
@@ -69,7 +109,7 @@ const Formulario = () => {
                         value={marca}
                         onChange={obtenerInformacionFormularion}
                     >
-                        <option value="" selected>Selecciona</option>
+                        <option value="">-- Seleccione --</option>
                         <option value="americano">Americano</option>
                         <option value="europeo">Europeo</option>
                         <option value="asiatico">Asiatico</option>
